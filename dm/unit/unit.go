@@ -36,6 +36,8 @@ type Unit interface {
 	Close()
 	// Pause pauses the process, it can be resumed later
 	Pause()
+	// Purge purge the sub task
+	Purge()
 	// Resume resumes the paused process
 	Resume(ctx context.Context, pr chan pb.ProcessResult)
 	// Update updates the configuration

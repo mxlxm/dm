@@ -821,6 +821,14 @@ Loop:
 
 				log.Infof("[worker] resume sub task %s", opLog.Task.Name)
 				err = st.Resume()
+			case pb.TaskOp_Purge:
+				if !exist {
+					err = errors.NotFoundf("sub task with name %s", opLog.Task.Name)
+					break
+				}
+
+				log.Infof("[worker] purge sub task %s", opLog.Task.Name)
+				err = st.Purge()
 			}
 
 			log.Infof("end to execute operation %d result %v", opLog.Id, err)

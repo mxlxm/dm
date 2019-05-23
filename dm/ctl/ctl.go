@@ -55,6 +55,7 @@ func Start(args []string) {
 		master.NewResumeTaskCmd(),
 		master.NewCheckTaskCmd(),
 		master.NewUpdateTaskCmd(),
+		master.NewPurgeTaskCmd(),
 		master.NewQueryStatusCmd(),
 		master.NewQueryErrorCmd(),
 		master.NewRefreshWorkerTasks(),

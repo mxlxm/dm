@@ -447,6 +447,19 @@ func (st *SubTask) Resume() error {
 	return nil
 }
 
+// Purge purge everything(without config) about the sub task
+func (st *SubTask) Purge() error {
+	if !st.stageCAS(pb.Stage_Stopped, pb.Stage_Stopped) { // only run for Stopped
+		return errors.Errorf("can only purge task on Stopped stage, but current stage is %s", st.Stage().String())
+	}
+
+	for _, u := range st.units {
+		u.Purge()
+		log.Infof("[subtask] %s purged with %s dm-unit", st.cfg.Name, u.Type())
+	}
+	return nil
+}
+
 // Update update the sub task's config
 func (st *SubTask) Update(cfg *config.SubTaskConfig) error {
 	if !st.stageCAS(pb.Stage_Paused, pb.Stage_Paused) { // only test for Paused
