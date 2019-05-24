@@ -457,6 +457,7 @@ func (st *SubTask) Purge() error {
 		u.Purge()
 		log.Infof("[subtask] %s purged with %s dm-unit", st.cfg.Name, u.Type())
 	}
+	taskState.DeleteLabelValues(st.cfg.Name)
 	return nil
 }
 

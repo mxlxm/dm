@@ -2085,6 +2085,24 @@ func (s *Syncer) Resume(ctx context.Context, pr chan pb.ProcessResult) {
 	s.Process(ctx, pr)
 }
 
+// Purge implements unit.Purge
+// now, only support to cleanup stopped task
+func (s *Syncer) Purge() {
+	if !s.isClosed() {
+		log.Warn("[syncer] try to purge, but not stopped")
+		return
+	}
+	s.purge()
+}
+
+func (s *Syncer) purge() {
+	s.Lock()
+	defer s.Unlock()
+	//TODO delete all metrics
+
+	s.checkpoint.Purge()
+}
+
 // Update implements Unit.Update
 // now, only support to update config for routes, filters, column-mappings, black-white-list
 // now no config diff implemented, so simply re-init use new config

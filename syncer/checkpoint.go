@@ -126,6 +126,9 @@ type CheckPoint interface {
 	// Clear clears all checkpoints
 	Clear() error
 
+	// Purge cleanup all checkpoints
+	Purge() error
+
 	// Load loads all checkpoints saved by CheckPoint
 	Load() error
 
@@ -251,6 +254,22 @@ func (cp *RemoteCheckPoint) Clear() error {
 	cp.globalPoint = newBinlogPoint(minCheckpoint, minCheckpoint)
 
 	cp.points = make(map[string]map[string]*binlogPoint)
+
+	return nil
+}
+
+// Purge implements CheckPoint.Purge
+func (cp *RemoteCheckPoint) Purge() error {
+	cp.Lock()
+	defer cp.Unlock()
+
+	// drop checkpoint table
+	sql2 := fmt.Sprintf("DROP TABLE IF EXISTS `%s`.`%s`", cp.schema, cp.table)
+	args := make([]interface{}, 0)
+	err := cp.db.executeSQL([]string{sql2}, [][]interface{}{args}, maxRetryCount)
+	if err != nil {
+		return errors.Trace(err)
+	}
 
 	return nil
 }
